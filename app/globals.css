@@ -7,6 +7,13 @@
   --color-texto-claro: #fcf7f8;
   --color-primaria-dark: #8a1219;
 
-  --font-titulo: var(--font-titulo);
-  --font-corpo: var(--font-corpo);
+  --font-sans: var(--font-sans);
+  --font-titulo: var(--font-sans);
+  --font-corpo: var(--font-sans);
+}
+
+body {
+  background-color: #fcf7f8;
+  color: #1a1a1a;
+  font-family: var(--font-sans);
 }
