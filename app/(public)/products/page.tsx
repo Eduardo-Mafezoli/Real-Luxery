@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Suspense } from "react";
-import { produtos, categorias } from "../data/products";
+import { produtos, categorias } from "@/app/data/products";
 import { FunnelSimple } from "@phosphor-icons/react";
 
 const grupos = [

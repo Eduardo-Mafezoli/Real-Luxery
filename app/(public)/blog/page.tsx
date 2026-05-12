@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Suspense } from "react";
-import { posts, categoriasBlog } from "../data/blog";
+import { posts, categoriasBlog } from "@/app/data/blog";
 
 function BlogContent() {
   const searchParams = useSearchParams();
