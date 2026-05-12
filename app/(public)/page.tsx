@@ -1,33 +1,32 @@
-import Image from "next/image";
 import Link from "next/link";
 import {
-  Lock,
-  Truck,
-  Medal,
-  CreditCard,
-  Play,
-  VideoCamera,
-  ShieldCheck,
+  LockIcon,
+  TruckIcon,
+  MedalIcon,
+  CreditCardIcon,
+  PlayIcon,
+  VideoCameraIcon,
+  ShieldCheckIcon,
 } from "@phosphor-icons/react/dist/ssr";
 
 const selos = [
   {
-    icone: Lock,
+    icone: LockIcon,
     titulo: "Compra Discreta",
     descricao: "Embalagem sem identificação e nota fiscal neutra.",
   },
   {
-    icone: Truck,
+    icone: TruckIcon,
     titulo: "Entrega Rápida",
     descricao: "Enviamos para todo o Brasil com agilidade e segurança.",
   },
   {
-    icone: Medal,
+    icone: MedalIcon,
     titulo: "Qualidade Premium",
     descricao: "Produtos selecionados com os melhores materiais do mercado.",
   },
   {
-    icone: CreditCard,
+    icone: CreditCardIcon,
     titulo: "Parcelamento 12x",
     descricao: "Parcele suas compras sem juros no cartão de crédito.",
   },
@@ -129,7 +128,7 @@ export default function Home() {
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
                 <div className="relative">
                   <div className="w-[72px] h-[72px] bg-(--color-primaria) rounded-full flex items-center justify-center text-white group-hover:scale-110 transition-transform duration-200">
-                    <Play size={28} weight="fill" />
+                    <PlayIcon size={28} weight="fill" />
                   </div>
                   <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[72px] h-[72px] rounded-full bg-[rgba(163,22,33,0.4)] animate-ping" />
                 </div>
@@ -137,7 +136,7 @@ export default function Home() {
 
               {/* LABEL */}
               <div className="absolute bottom-4 left-4 z-20 flex items-center gap-2 text-white text-xs tracking-wide opacity-90">
-                <VideoCamera size={16} />
+                <VideoCameraIcon size={16} />
                 Conheça a Real Luxery
               </div>
             </div>
@@ -145,7 +144,7 @@ export default function Home() {
 
           {/* BADGE */}
           <div className="flex items-center gap-2 text-[#888] text-xs tracking-wide pl-1">
-            <ShieldCheck size={16} className="text-(--color-primaria)" />
+            <ShieldCheckIcon size={16} className="text-(--color-primaria)" />
             Compra 100% discreta e segura
           </div>
         </div>

@@ -1,7 +1,7 @@
 import { use } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { posts, categoriasBlog } from "../../data/blog";
+import { posts, categoriasBlog } from "@/app/data/blog";
 import {
   ArrowLeftIcon,
   ClockIcon,

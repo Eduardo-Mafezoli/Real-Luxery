@@ -2,11 +2,10 @@
 
 import Link from "next/link";
 import { useState, useRef } from "react";
-import {
-  MagnifyingGlass,
-  ShoppingCart,
-  CaretDown,
-} from "@phosphor-icons/react";
+import { MagnifyingGlass, CaretDown } from "@phosphor-icons/react";
+import dynamic from "next/dynamic";
+
+const CartBadge = dynamic(() => import("./CartBadge"), { ssr: false });
 
 const produtosMenu = {
   feminino: [
@@ -68,13 +67,12 @@ export default function Header() {
 
         {/* LINKS */}
         <ul className="flex gap-10 list-none items-center">
-          {/* INÍCIO */}
           <li>
             <Link
               href="/"
               className="relative flex items-center text-(--color-texto-claro) text-xs tracking-widest uppercase
-    after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[1px] after:bg-(--color-texto-claro)
-    after:transition-all after:duration-300 hover:after:w-full"
+              after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[1px] after:bg-(--color-texto-claro)
+              after:transition-all after:duration-300 hover:after:w-full"
             >
               Início
             </Link>
@@ -87,7 +85,7 @@ export default function Header() {
             onMouseLeave={handleLeave}
           >
             <button
-              className="flex items-center gap-1 text-(--color-texto-claro) text-xs tracking-widest uppercase 
+              className="flex items-center gap-1 text-(--color-texto-claro) text-xs tracking-widest uppercase
               relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[1px] after:bg-(--color-texto-claro)
               after:transition-all after:duration-300 hover:after:w-full bg-transparent border-none cursor-pointer"
             >
@@ -105,7 +103,6 @@ export default function Header() {
                 transition-all duration-300 origin-top
                 ${openMenu === "produtos" ? "opacity-100 scale-y-100 pointer-events-auto" : "opacity-0 scale-y-95 pointer-events-none"}`}
             >
-              {/* CABEÇALHO DO DROPDOWN */}
               <div className="grid grid-cols-4 gap-0">
                 <div className="p-6 border-r border-gray-100">
                   <p className="text-[10px] tracking-[3px] uppercase text-(--color-primaria) font-semibold mb-4">
@@ -124,7 +121,6 @@ export default function Header() {
                     ))}
                   </ul>
                 </div>
-
                 <div className="p-6 border-r border-gray-100">
                   <p className="text-[10px] tracking-[3px] uppercase text-(--color-primaria) font-semibold mb-4">
                     Para Ele
@@ -142,7 +138,6 @@ export default function Header() {
                     ))}
                   </ul>
                 </div>
-
                 <div className="p-6 border-r border-gray-100">
                   <p className="text-[10px] tracking-[3px] uppercase text-(--color-primaria) font-semibold mb-4">
                     Sadomasoquismo
@@ -160,7 +155,6 @@ export default function Header() {
                     ))}
                   </ul>
                 </div>
-
                 <div className="p-6 bg-(--color-fundo)">
                   <p className="text-[10px] tracking-[3px] uppercase text-(--color-primaria) font-semibold mb-4">
                     Geral
@@ -179,8 +173,6 @@ export default function Header() {
                   </ul>
                 </div>
               </div>
-
-              {/* RODAPÉ DO DROPDOWN */}
               <div className="bg-(--color-primaria) px-6 py-3 flex justify-between items-center">
                 <p className="text-[10px] text-(--color-texto-claro) tracking-widest uppercase opacity-80">
                   Entrega discreta em todo o Brasil
@@ -217,8 +209,8 @@ export default function Header() {
               onMouseEnter={() => handleEnter("blog")}
               onMouseLeave={handleLeave}
               className={`absolute top-[calc(100%+0.75rem)] left-1/2 -translate-x-1/2 bg-white shadow-2xl z-50 min-w-[320px]
-    transition-all duration-300 origin-top
-    ${openMenu === "blog" ? "opacity-100 scale-y-100 pointer-events-auto" : "opacity-0 scale-y-95 pointer-events-none"}`}
+                transition-all duration-300 origin-top
+                ${openMenu === "blog" ? "opacity-100 scale-y-100 pointer-events-auto" : "opacity-0 scale-y-95 pointer-events-none"}`}
             >
               <ul className="flex flex-col py-3">
                 {blogMenu.map((item) => (
@@ -232,8 +224,6 @@ export default function Header() {
                   </li>
                 ))}
               </ul>
-
-              {/* RODAPÉ */}
               <div className="bg-(--color-primaria) px-6 py-3 flex justify-between items-center">
                 <p className="text-[10px] text-(--color-texto-claro) tracking-widest uppercase opacity-80">
                   Conteúdo novo toda semana
@@ -254,12 +244,9 @@ export default function Header() {
           <button className="text-(--color-texto-claro) hover:opacity-70 transition-opacity">
             <MagnifyingGlass size={20} />
           </button>
-          <Link
-            href="/carrinho"
-            className="text-(--color-texto-claro) hover:opacity-70 transition-opacity"
-          >
-            <ShoppingCart size={20} />
-          </Link>
+
+          <CartBadge />
+
           <Link
             href="/login"
             className="text-(--color-texto-claro) border border-(--color-texto-claro) px-4 py-1.5 text-xs tracking-widest uppercase hover:bg-(--color-texto-claro) hover:text-(--color-primaria) transition-all"
