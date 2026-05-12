@@ -4,6 +4,7 @@ import { use, useState } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { produtos, categorias } from "@/app/data/products";
+import { useCartStore } from "@/app/store/useCartStore";
 import {
   ShoppingCart,
   ArrowLeft,
@@ -30,6 +31,22 @@ export default function ProductPage({ params }: Props) {
   const [nota, setNota] = useState(0);
   const [hoverNota, setHoverNota] = useState(0);
   const [quantidade, setQuantidade] = useState(1);
+  const [adicionado, setAdicionado] = useState(false);
+
+  const addItem = useCartStore((state) => state.addItem);
+
+  const handleAddToCart = () => {
+    for (let i = 0; i < quantidade; i++) {
+      addItem({
+        slug: produto.slug,
+        nome: produto.nome,
+        preco: produto.preco,
+        categoria: produto.categoria,
+      });
+    }
+    setAdicionado(true);
+    setTimeout(() => setAdicionado(false), 2000);
+  };
 
   const mediaAvaliacoes =
     produto.avaliacoes && produto.avaliacoes.length > 0
@@ -70,7 +87,6 @@ export default function ProductPage({ params }: Props) {
       </div>
 
       <div className="px-[6rem] py-16">
-        {/* PRODUTO PRINCIPAL */}
         <div className="grid grid-cols-2 gap-16 max-w-6xl mx-auto">
           {/* IMAGEM */}
           <div className="flex flex-col gap-4">
@@ -114,7 +130,7 @@ export default function ProductPage({ params }: Props) {
                       </span>
                     ))}
                   </div>
-                  <span className="text-xs text-[#888]">
+                  <span className="font-corpo text-xs text-[#888]">
                     {mediaAvaliacoes} ({produto.avaliacoes?.length} avaliações)
                   </span>
                 </div>
@@ -122,10 +138,10 @@ export default function ProductPage({ params }: Props) {
             </div>
 
             <div className="flex items-baseline gap-3">
-              <p className="font-titulo text-4xl text-(--color-primaria) font-bold">
+              <p className="font-corpo text-4xl text-(--color-primaria) font-bold">
                 R$ {produto.preco.toFixed(2).replace(".", ",")}
               </p>
-              <p className="text-xs text-[#888]">
+              <p className="font-corpo text-xs text-[#888]">
                 ou 12x de R$ {(produto.preco / 12).toFixed(2).replace(".", ",")}{" "}
                 sem juros
               </p>
@@ -147,7 +163,7 @@ export default function ProductPage({ params }: Props) {
                 >
                   −
                 </button>
-                <span className="px-6 py-2 text-sm border-x border-gray-200">
+                <span className="font-corpo px-6 py-2 text-sm border-x border-gray-200">
                   {quantidade}
                 </span>
                 <button
@@ -161,13 +177,26 @@ export default function ProductPage({ params }: Props) {
 
             {/* BOTÕES */}
             <div className="flex flex-col gap-3">
-              <button className="flex items-center justify-center gap-2 py-4 bg-(--color-primaria) text-white text-xs tracking-[2px] uppercase hover:opacity-90 transition-opacity">
+              <button
+                onClick={handleAddToCart}
+                className={`flex items-center justify-center gap-2 py-4 text-xs tracking-[2px] uppercase transition-all
+                  ${
+                    adicionado
+                      ? "bg-green-600 text-white"
+                      : "bg-(--color-primaria) text-white hover:opacity-90"
+                  }`}
+              >
                 <ShoppingCart size={18} />
-                Adicionar ao carrinho
+                {adicionado
+                  ? "Adicionado ao carrinho!"
+                  : "Adicionar ao carrinho"}
               </button>
-              <button className="py-4 border border-(--color-primaria) text-(--color-primaria) text-xs tracking-[2px] uppercase hover:bg-(--color-primaria) hover:text-white transition-all">
+              <Link
+                href="/cart"
+                className="py-4 border border-(--color-primaria) text-(--color-primaria) text-xs tracking-[2px] uppercase hover:bg-(--color-primaria) hover:text-white transition-all text-center"
+              >
                 Comprar agora
-              </button>
+              </Link>
             </div>
 
             {/* SELOS */}
@@ -227,7 +256,7 @@ export default function ProductPage({ params }: Props) {
             </h2>
             {mediaAvaliacoes ? (
               <div className="flex items-center gap-6">
-                <span className="font-titulo text-7xl text-(--color-primaria) font-bold leading-none">
+                <span className="font-corpo text-7xl text-(--color-primaria) font-bold leading-none">
                   {mediaAvaliacoes}
                 </span>
                 <div className="flex flex-col gap-2">
@@ -241,7 +270,7 @@ export default function ProductPage({ params }: Props) {
                       </span>
                     ))}
                   </div>
-                  <span className="text-xs text-[#888]">
+                  <span className="font-corpo text-xs text-[#888]">
                     Baseado em {produto.avaliacoes?.length} avaliações
                   </span>
                 </div>
@@ -270,7 +299,7 @@ export default function ProductPage({ params }: Props) {
                       <span className="text-sm font-medium text-(--color-texto)">
                         {av.nome}
                       </span>
-                      <span className="text-[0.65rem] text-[#aaa]">
+                      <span className="font-corpo text-[0.65rem] text-[#aaa]">
                         {av.data}
                       </span>
                     </div>
@@ -366,7 +395,7 @@ export default function ProductPage({ params }: Props) {
                     <h3 className="font-titulo text-base text-(--color-texto) group-hover:text-(--color-primaria) transition-colors">
                       {rel.nome}
                     </h3>
-                    <p className="text-sm font-semibold text-(--color-primaria)">
+                    <p className="font-corpo text-sm font-semibold text-(--color-primaria)">
                       R$ {rel.preco.toFixed(2).replace(".", ",")}
                     </p>
                   </div>
