@@ -26,9 +26,10 @@ export default function LoginPage() {
   });
 
   const onSubmit = async (data: LoginSchema) => {
-    // conectar com backend depois
     console.log(data);
   };
+
+  const hasError = errors.email || errors.password;
 
   return (
     <div className="min-h-screen flex">
@@ -40,7 +41,6 @@ export default function LoginPage() {
         >
           Real Luxery
         </Link>
-
         <div className="flex flex-col gap-6">
           <h1 className="font-titulo text-6xl text-(--color-texto-claro) font-bold leading-tight">
             Prazer com elegância.
@@ -64,7 +64,6 @@ export default function LoginPage() {
             ))}
           </div>
         </div>
-
         <p className="text-xs text-(--color-texto-claro) opacity-40 tracking-wide">
           &copy; 2026 Real Luxery. Todos os direitos reservados.
         </p>
@@ -73,7 +72,6 @@ export default function LoginPage() {
       {/* LADO DIREITO */}
       <div className="w-full lg:w-1/2 flex items-center justify-center px-8 py-16 bg-(--color-fundo)">
         <div className="w-full max-w-sm flex flex-col gap-8">
-          {/* VOLTAR */}
           <Link
             href="/"
             className="flex items-center gap-2 text-xs tracking-[2px] uppercase text-[#888] hover:text-(--color-primaria) transition-colors self-start"
@@ -82,7 +80,6 @@ export default function LoginPage() {
             Voltar
           </Link>
 
-          {/* HEADER */}
           <div className="flex flex-col gap-2">
             <h2 className="font-titulo text-4xl text-(--color-texto) font-bold">
               Bem-vindo de volta
@@ -96,6 +93,19 @@ export default function LoginPage() {
             onSubmit={handleSubmit(onSubmit)}
             className="flex flex-col gap-5"
           >
+            {/* ERRO GENÉRICO — não indica qual campo está errado */}
+            {hasError && (
+              <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-100 rounded">
+                <WarningCircleIcon
+                  size={14}
+                  className="text-red-400 shrink-0"
+                />
+                <span className="text-xs text-red-500">
+                  Email ou senha inválidos. Verifique suas credenciais.
+                </span>
+              </div>
+            )}
+
             {/* EMAIL */}
             <div className="flex flex-col gap-2">
               <label className="text-xs tracking-[2px] uppercase text-(--color-texto) font-medium">
@@ -118,12 +128,6 @@ export default function LoginPage() {
                     }`}
                 />
               </div>
-              {errors.email && (
-                <div className="flex items-center gap-1.5 text-red-500">
-                  <WarningCircleIcon size={13} />
-                  <span className="text-xs">{errors.email.message}</span>
-                </div>
-              )}
             </div>
 
             {/* SENHA */}
@@ -167,12 +171,6 @@ export default function LoginPage() {
                   )}
                 </button>
               </div>
-              {errors.password && (
-                <div className="flex items-center gap-1.5 text-red-500">
-                  <WarningCircleIcon size={13} />
-                  <span className="text-xs">{errors.password.message}</span>
-                </div>
-              )}
             </div>
 
             <button
