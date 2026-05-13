@@ -68,7 +68,9 @@
 - [x] Mensagens de erro genéricas (proteção contra user enumeration)
 - [x] Página de Registro com Zod + React Hook Form
 - [x] Recuperação de senha (forgot password)
-- [ ] Reset de senha (reset password via token)
+- [x] Verificação de código alfanumérico 8 caracteres
+- [x] Reset de senha com indicador de força
+- [ ] Integração com backend (JWT + email)
 
 ### Usuário
 

@@ -38,6 +38,13 @@ export const forgotPasswordSchema = z.object({
     .check(z.email({ error: "E-mail inválido" })),
 });
 
+export const verifyTokenSchema = z.object({
+  code: z
+    .string()
+    .length(8, "O código deve ter 8 caracteres")
+    .regex(/^[a-zA-Z0-9]+$/, "Código inválido"),
+});
+
 export const resetPasswordSchema = z
   .object({
     password: z
@@ -56,4 +63,5 @@ export const resetPasswordSchema = z
 export type LoginSchema = z.infer<typeof loginSchema>;
 export type RegisterSchema = z.infer<typeof registerSchema>;
 export type ForgotPasswordSchema = z.infer<typeof forgotPasswordSchema>;
+export type VerifyTokenSchema = z.infer<typeof verifyTokenSchema>;
 export type ResetPasswordSchema = z.infer<typeof resetPasswordSchema>;
