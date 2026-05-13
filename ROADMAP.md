@@ -14,8 +14,6 @@
 
 ## Estrutura de Rotas
 
-### Público
-
 | Rota               | Descrição            |
 | ------------------ | -------------------- |
 | `/`                | Landing page         |
@@ -23,8 +21,6 @@
 | `/products/[slug]` | Produto individual   |
 | `/blog`            | Listagem com filtros |
 | `/blog/[slug]`     | Post individual      |
-
-### Auth
 
 | Rota        | Descrição |
 | ----------- | --------- |
@@ -58,33 +54,91 @@
 
 ## Progresso Frontend
 
-- [x] Landing page
-- [x] Produtos — listagem + filtros + individual
-- [x] Blog — listagem + filtros + post individual
-- [x] Header com dropdown e navegação
-- [x] Footer
-- [ ] Login / Registro
-- [ ] Perfil do usuário
-- [ ] Carrinho
-- [ ] Checkout
-- [ ] Pesquisa
-- [ ] Admin Dashboard
+### Público
+
+- [x] Landing page completa
+- [x] Header com dropdown, categorias e badge do carrinho
+- [x] Footer com links e redes sociais
+- [x] Produtos — listagem + filtros por categoria + individual
+- [x] Blog — listagem + filtros por categoria + post individual
+
+### Auth
+
+- [x] Página de Login com Zod + React Hook Form
+- [x] Mensagens de erro genéricas (proteção contra user enumeration)
+- [x] Página de Registro com Zod + React Hook Form
+- [x] Recuperação de senha (forgot password)
+- [ ] Reset de senha (reset password via token)
+
+### Usuário
+
+- [x] Layout do perfil com sidebar
+- [ ] Dados pessoais — editar nome, email, telefone
+- [ ] Meus pedidos — histórico e status
+- [ ] Endereços — adicionar, editar, deletar
+- [ ] Segurança — alterar senha
+- [ ] Privacidade & LGPD — ver dados, exportar, deletar conta
+- [x] Carrinho — adicionar, remover, atualizar quantidade
+- [ ] Checkout — endereço + pagamento + confirmação
+
+### Admin
+
+- [ ] Layout do dashboard com sidebar admin
+- [ ] Overview — métricas, vendas, pedidos recentes
+- [ ] Produtos — listar, criar, editar, deletar + upload imagens
+- [ ] Pedidos — listar, filtrar por status, atualizar status
+- [ ] Clientes — listar, ver histórico
+- [ ] Blog — criar, editar, publicar, despublicar posts
+- [ ] Avaliações — moderar, aprovar, remover
+- [ ] Configurações da loja
 
 ---
 
 ## Progresso Backend
 
-- [ ] Setup — Fastify + Prisma + PostgreSQL
-- [ ] Auth API — JWT + refresh token
-- [ ] Users API
-- [ ] Products API — CRUD + upload imagens
-- [ ] Categories API
-- [ ] Orders API
-- [ ] Cart API
-- [ ] Reviews API
-- [ ] Blog API
+- [ ] Setup — Fastify + Prisma + PostgreSQL + Zod
+- [ ] Auth API — registro, login, logout, refresh token
+- [ ] Users API — CRUD + roles
+- [ ] Products API — CRUD + upload imagens + categorias
+- [ ] Orders API — criar, listar, atualizar status
+- [ ] Cart API — sincronizar com frontend
+- [ ] Reviews API — criar, moderar
+- [ ] Blog API — CRUD posts
+- [ ] Admin API — métricas e dashboard
 
 ---
+
+## Progresso Testes
+
+- [ ] Setup Jest
+- [ ] Testes unitários — validações Zod
+- [ ] Testes unitários — store do carrinho
+- [ ] Testes E2E Playwright — fluxo de compra
+- [ ] Testes E2E Playwright — auth
+- [ ] Testes de API — endpoints principais
+
+---
+
+## Progresso Segurança
+
+- [x] Headers HTTP — X-Frame-Options, CSP, HSTS etc
+- [ ] Rate limiting no backend
+- [ ] Helmet no Fastify
+- [ ] CORS configurado
+- [ ] Sanitização de inputs
+- [ ] Logs de auditoria
+- [ ] LGPD — exportar e deletar dados do usuário
+
+---
+
+## Progresso Deploy
+
+- [ ] Variáveis de ambiente configuradas
+- [ ] Frontend — Vercel
+- [ ] Backend — Railway
+- [ ] Banco — PostgreSQL na Railway
+- [ ] Domínio configurado
+- [ ] SSL ativo
 
 ## Modelos do Banco (Prisma)
 
