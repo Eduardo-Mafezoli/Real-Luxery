@@ -3,12 +3,15 @@
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Suspense } from "react";
-import { posts, categoriasBlog } from "@/app/data/blog";
+import { usePosts } from "@/app/hooks";
 
 function BlogContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const categoriaAtiva = searchParams.get("categoria");
+  const categoriaAtiva = searchParams.get("categoria") ?? undefined;
+
+  const { posts, postDestaque, categorias, loading, error } =
+    usePosts(categoriaAtiva);
 
   const setCategoriaAtiva = (slug: string | null) => {
     if (slug) {
@@ -18,12 +21,7 @@ function BlogContent() {
     }
   };
 
-  const postsFiltrados = categoriaAtiva
-    ? posts.filter((p) => p.categoria === categoriaAtiva)
-    : posts;
-
-  const postDestaque = posts.find((p) => p.destaque);
-  const postsGrid = postsFiltrados.filter((p) => !p.destaque || categoriaAtiva);
+  const postsGrid = posts.filter((p) => !p.destaque || categoriaAtiva);
 
   return (
     <div className="min-h-screen bg-(--color-fundo)">
@@ -73,7 +71,7 @@ function BlogContent() {
           >
             Todos
           </button>
-          {categoriasBlog.map((cat) => (
+          {categorias.map((cat) => (
             <button
               key={cat.slug}
               onClick={() => setCategoriaAtiva(cat.slug)}
@@ -94,45 +92,73 @@ function BlogContent() {
           <div>
             <h2 className="font-titulo text-3xl text-(--color-texto)">
               {categoriaAtiva
-                ? categoriasBlog.find((c) => c.slug === categoriaAtiva)?.label
+                ? categorias.find((c) => c.slug === categoriaAtiva)?.label
                 : "Todos os artigos"}
             </h2>
             <p className="text-xs text-[#888] mt-1">
-              {postsFiltrados.length} artigo
-              {postsFiltrados.length !== 1 ? "s" : ""} encontrado
-              {postsFiltrados.length !== 1 ? "s" : ""}
+              {loading
+                ? "Carregando..."
+                : `${posts.length} artigo${posts.length !== 1 ? "s" : ""} encontrado${posts.length !== 1 ? "s" : ""}`}
             </p>
           </div>
         </div>
 
-        {/* GRID */}
-        <div className="grid grid-cols-3 gap-6">
-          {postsGrid.map((post) => (
-            <Link
-              key={post.slug}
-              href={`/blog/${post.slug}`}
-              className="group bg-white rounded-xl overflow-hidden hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-[rgba(163,22,33,0.08)] transition-all duration-200"
-            >
-              <div className="w-full aspect-video bg-gradient-to-br from-[#f5d0d3] to-[#e8c5c8]" />
-              <div className="p-6 flex flex-col gap-3">
-                <span className="text-[0.65rem] tracking-[3px] uppercase text-(--color-primaria) font-medium">
-                  {categoriasBlog.find((c) => c.slug === post.categoria)?.label}
-                </span>
-                <h3 className="font-titulo text-xl text-(--color-texto) group-hover:text-(--color-primaria) transition-colors leading-snug">
-                  {post.titulo}
-                </h3>
-                <p className="text-xs text-[#888] leading-relaxed line-clamp-2">
-                  {post.resumo}
-                </p>
-                <div className="flex items-center gap-3 text-[0.65rem] text-[#aaa] mt-1">
-                  <span>{post.data}</span>
-                  <span>·</span>
-                  <span>{post.tempoLeitura} de leitura</span>
+        {/* ERRO */}
+        {error && (
+          <div className="flex items-center justify-center h-64">
+            <p className="text-sm text-red-400">{error}</p>
+          </div>
+        )}
+
+        {/* LOADING */}
+        {loading && (
+          <div className="grid grid-cols-3 gap-6">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div
+                key={i}
+                className="bg-white rounded-xl overflow-hidden animate-pulse"
+              >
+                <div className="aspect-video bg-gray-100" />
+                <div className="p-6 flex flex-col gap-3">
+                  <div className="h-3 bg-gray-100 rounded w-1/3" />
+                  <div className="h-5 bg-gray-100 rounded w-2/3" />
+                  <div className="h-3 bg-gray-100 rounded w-full" />
                 </div>
               </div>
-            </Link>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
+
+        {/* GRID */}
+        {!loading && !error && (
+          <div className="grid grid-cols-3 gap-6">
+            {postsGrid.map((post) => (
+              <Link
+                key={post.slug}
+                href={`/blog/${post.slug}`}
+                className="group bg-white rounded-xl overflow-hidden hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-[rgba(163,22,33,0.08)] transition-all duration-200"
+              >
+                <div className="w-full aspect-video bg-gradient-to-br from-[#f5d0d3] to-[#e8c5c8]" />
+                <div className="p-6 flex flex-col gap-3">
+                  <span className="text-[0.65rem] tracking-[3px] uppercase text-(--color-primaria) font-medium">
+                    {categorias.find((c) => c.slug === post.categoria)?.label}
+                  </span>
+                  <h3 className="font-titulo text-xl text-(--color-texto) group-hover:text-(--color-primaria) transition-colors leading-snug">
+                    {post.titulo}
+                  </h3>
+                  <p className="text-xs text-[#888] leading-relaxed line-clamp-2">
+                    {post.resumo}
+                  </p>
+                  <div className="flex items-center gap-3 text-[0.65rem] text-[#aaa] mt-1">
+                    <span>{post.data}</span>
+                    <span>·</span>
+                    <span>{post.tempoLeitura} de leitura</span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

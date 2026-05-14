@@ -12,7 +12,7 @@ import {
   Trash,
   WarningCircle,
 } from "@phosphor-icons/react";
-import { produtos, categorias } from "@/app/data/products";
+import { useProduct, useProducts } from "@/app/hooks";
 import { notFound } from "next/navigation";
 
 const productSchema = z.object({
@@ -43,13 +43,11 @@ type Props = {
 
 export default function EditProductPage({ params }: Props) {
   const { id } = use(params);
-  const produto = produtos.find((p) => p.slug === id);
-
-  if (!produto) notFound();
-
-  const [caracteristicas, setCaracteristicas] = useState(
-    produto.caracteristicas ?? [{ label: "", valor: "" }],
-  );
+  const { produto, loading } = useProduct(id);
+  const { categorias } = useProducts();
+  const [caracteristicas, setCaracteristicas] = useState<
+    { label: string; valor: string }[]
+  >([]);
   const [saved, setSaved] = useState(false);
 
   const {
@@ -60,20 +58,21 @@ export default function EditProductPage({ params }: Props) {
   } = useForm<ProductSchema>({
     resolver: zodResolver(productSchema) as Resolver<ProductSchema>,
     defaultValues: {
-      nome: produto.nome,
-      slug: produto.slug,
-      descricao: produto.descricao,
-      preco: produto.preco.toFixed(2).replace(".", ","),
-      categoria: produto.categoria,
-      badge: produto.badge ?? "",
-      ativo: true,
-      esgotado: false,
+      nome: produto?.nome ?? "",
+      slug: produto?.slug ?? "",
+      descricao: produto?.descricao ?? "",
+      preco: produto?.preco.toFixed(2).replace(".", ",") ?? "",
+      categoria: produto?.categoria ?? "",
+      badge: produto?.badge ?? "",
+      ativo: produto?.ativo ?? true,
+      esgotado: produto?.esgotado ?? false,
     },
   });
 
   const slugValue = watch("slug");
 
   const onSubmit = async (data: ProductSchema) => {
+    // TODO: productService.update(id, data)
     console.log({ ...data, caracteristicas });
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
@@ -94,6 +93,16 @@ export default function EditProductPage({ params }: Props) {
     updated[index][field] = value;
     setCaracteristicas(updated);
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="w-8 h-8 border-2 border-(--color-primaria) border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (!produto) notFound();
 
   return (
     <div className="flex flex-col gap-6">
@@ -272,12 +281,10 @@ export default function EditProductPage({ params }: Props) {
 
         {/* COLUNA LATERAL */}
         <div className="flex flex-col gap-6">
-          {/* PUBLICAÇÃO */}
           <div className="bg-white rounded-xl p-6 flex flex-col gap-4">
             <h2 className="font-titulo text-lg text-(--color-texto)">
               Publicação
             </h2>
-
             <div className="flex items-center justify-between">
               <div>
                 <span className="text-sm text-(--color-texto)">
@@ -297,7 +304,6 @@ export default function EditProductPage({ params }: Props) {
                 <div className="w-10 h-5 bg-gray-200 rounded-full peer peer-checked:bg-(--color-primaria) peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all" />
               </label>
             </div>
-
             <div className="flex items-center justify-between pt-3 border-t border-gray-100">
               <div>
                 <span className="text-sm text-(--color-texto)">Esgotado</span>
@@ -314,7 +320,6 @@ export default function EditProductPage({ params }: Props) {
                 <div className="w-10 h-5 bg-gray-200 rounded-full peer peer-checked:bg-yellow-400 peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all" />
               </label>
             </div>
-
             <div className="flex flex-col gap-3 pt-3 border-t border-gray-100">
               <button
                 type="submit"
@@ -332,7 +337,6 @@ export default function EditProductPage({ params }: Props) {
             </div>
           </div>
 
-          {/* PREÇO */}
           <div className="bg-white rounded-xl p-6 flex flex-col gap-4">
             <h2 className="font-titulo text-lg text-(--color-texto)">Preço</h2>
             <div className="flex flex-col gap-2">
@@ -354,7 +358,6 @@ export default function EditProductPage({ params }: Props) {
             </div>
           </div>
 
-          {/* ORGANIZAÇÃO */}
           <div className="bg-white rounded-xl p-6 flex flex-col gap-4">
             <h2 className="font-titulo text-lg text-(--color-texto)">
               Organização
@@ -382,7 +385,6 @@ export default function EditProductPage({ params }: Props) {
                 </div>
               )}
             </div>
-
             <div className="flex flex-col gap-2">
               <label className="text-xs tracking-[2px] uppercase text-(--color-texto) font-medium">
                 Badge (opcional)
@@ -399,7 +401,6 @@ export default function EditProductPage({ params }: Props) {
             </div>
           </div>
 
-          {/* ZONA DE PERIGO */}
           <div className="bg-white rounded-xl p-6 border-2 border-red-100">
             <h2 className="font-titulo text-lg text-red-500 mb-2">
               Zona de perigo
