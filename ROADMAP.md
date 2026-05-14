@@ -81,7 +81,7 @@
 - [x] Segurança — alterar senha + sessões ativas
 - [x] Privacidade & LGPD — ver dados, exportar, deletar conta
 - [x] Carrinho — adicionar, remover, atualizar quantidade
-- [ ] Checkout — endereço + pagamento + confirmação
+- [x] Checkout — endereço + pagamento + confirmação
 
 ### Admin
 
