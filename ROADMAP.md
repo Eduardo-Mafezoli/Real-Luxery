@@ -75,23 +75,22 @@
 ### Usuário
 
 - [x] Layout do perfil com sidebar
-- [ ] Dados pessoais — editar nome, email, telefone
-- [ ] Meus pedidos — histórico e status
-- [ ] Endereços — adicionar, editar, deletar
-- [ ] Segurança — alterar senha
-- [ ] Privacidade & LGPD — ver dados, exportar, deletar conta
+- [x] Dados pessoais — editar nome, email, telefone, CPF, data de nascimento
+- [x] Meus pedidos — histórico com accordion e timeline de status
+- [x] Endereços — adicionar, editar, deletar, definir padrão
+- [x] Segurança — alterar senha + sessões ativas
+- [x] Privacidade & LGPD — ver dados, exportar, deletar conta
 - [x] Carrinho — adicionar, remover, atualizar quantidade
 - [ ] Checkout — endereço + pagamento + confirmação
 
 ### Admin
 
-- [ ] Layout do dashboard com sidebar admin
-- [ ] Overview — métricas, vendas, pedidos recentes
-- [ ] Produtos — listar, criar, editar, deletar + upload imagens
-- [ ] Pedidos — listar, filtrar por status, atualizar status
-- [ ] Clientes — listar, ver histórico
-- [ ] Blog — criar, editar, publicar, despublicar posts
-- [ ] Avaliações — moderar, aprovar, remover
+- [x] Layout do dashboard com sidebar carmesim
+- [x] Overview — métricas, gráfico circular por categoria, produtos mais vendidos, pedidos recentes
+- [x] Produtos — listar, criar, editar, deletar, marcar esgotado/ativo
+- [x] Pedidos — listar, filtrar por status, accordion com itens + endereço + timeline + código de rastreio
+- [x] Blog — listar, criar, editar, publicar, despublicar posts
+- [x] Avaliações — filtro automático, moderar suspeitos, aprovar, remover
 - [ ] Configurações da loja
 
 ---
