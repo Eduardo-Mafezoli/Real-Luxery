@@ -1,12 +1,10 @@
+"use client";
+
 import { use } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { posts, categoriasBlog } from "@/app/data/blog";
-import {
-  ArrowLeftIcon,
-  ClockIcon,
-  UserIcon,
-} from "@phosphor-icons/react/dist/ssr";
+import { usePost, usePosts } from "@/app/hooks";
+import { ArrowLeft, Clock, User } from "@phosphor-icons/react";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -14,11 +12,23 @@ type Props = {
 
 export default function BlogPostPage({ params }: Props) {
   const { slug } = use(params);
-  const post = posts.find((p) => p.slug === slug);
+  const { post, loading, error } = usePost(slug);
+  const { categorias, posts } = usePosts();
 
-  if (!post) notFound();
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-(--color-fundo) flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-8 h-8 border-2 border-(--color-primaria) border-t-transparent rounded-full animate-spin" />
+          <p className="text-sm text-[#888]">Carregando post...</p>
+        </div>
+      </div>
+    );
+  }
 
-  const categoria = categoriasBlog.find((c) => c.slug === post.categoria);
+  if (error || !post) notFound();
+
+  const categoria = categorias.find((c) => c.slug === post.categoria);
   const relacionados = posts
     .filter((p) => p.categoria === post.categoria && p.slug !== post.slug)
     .slice(0, 3);
@@ -53,7 +63,7 @@ export default function BlogPostPage({ params }: Props) {
         </div>
       </div>
 
-      {/* HERO DO POST */}
+      {/* HERO */}
       <div className="bg-(--color-primaria) px-[6rem] py-16">
         <div className="max-w-3xl mx-auto flex flex-col gap-4">
           <span className="text-[0.65rem] tracking-[4px] uppercase text-white opacity-70">
@@ -67,14 +77,14 @@ export default function BlogPostPage({ params }: Props) {
           </p>
           <div className="flex items-center gap-4 text-[0.65rem] text-white opacity-60 mt-2">
             <span className="flex items-center gap-1">
-              <UserIcon size={12} />
+              <User size={12} />
               {post.autor}
             </span>
             <span>·</span>
             <span>{post.data}</span>
             <span>·</span>
             <span className="flex items-center gap-1">
-              <ClockIcon size={12} />
+              <Clock size={12} />
               {post.tempoLeitura} de leitura
             </span>
           </div>
@@ -99,14 +109,14 @@ export default function BlogPostPage({ params }: Props) {
             ))}
           </div>
 
-          {/* TAGS */}
+          {/* CATEGORIA */}
           <div className="flex items-center gap-3 mt-12 pt-8 border-t border-gray-100">
             <span className="text-xs text-[#888] tracking-wide">
               Categoria:
             </span>
             <Link
               href={`/blog?categoria=${post.categoria}`}
-              className="hover:text-(--color-primaria) transition-colors"
+              className="hover:text-(--color-primaria) transition-colors text-xs"
             >
               {categoria?.label}
             </Link>
@@ -118,7 +128,7 @@ export default function BlogPostPage({ params }: Props) {
               href="/blog"
               className="flex items-center gap-2 text-xs tracking-[2px] uppercase text-(--color-primaria) hover:gap-3 transition-all"
             >
-              <ArrowLeftIcon size={14} />
+              <ArrowLeft size={14} />
               Voltar para o blog
             </Link>
           </div>
@@ -143,10 +153,7 @@ export default function BlogPostPage({ params }: Props) {
                   <div className="aspect-video bg-gradient-to-br from-[#f5d0d3] to-[#e8c5c8]" />
                   <div className="p-5 flex flex-col gap-2">
                     <span className="text-[0.65rem] tracking-[3px] uppercase text-(--color-primaria)">
-                      {
-                        categoriasBlog.find((c) => c.slug === rel.categoria)
-                          ?.label
-                      }
+                      {categorias.find((c) => c.slug === rel.categoria)?.label}
                     </span>
                     <h3 className="font-titulo text-base text-(--color-texto) group-hover:text-(--color-primaria) transition-colors leading-snug">
                       {rel.titulo}

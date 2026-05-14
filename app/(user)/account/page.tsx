@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useState } from "react";
 import { CheckCircle } from "@phosphor-icons/react";
+import { maskCpf, maskPhone, maskDate } from "@/app/utils";
 
 const personalDataSchema = z.object({
   name: z
@@ -56,34 +57,10 @@ export default function AccountPage() {
   });
 
   const onSubmit = async (data: PersonalDataSchema) => {
+    // TODO: authService.updateProfile(data)
     console.log(data);
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
-  };
-
-  const maskDate = (value: string) => {
-    let v = value.replace(/\D/g, "");
-    if (v.length >= 3) v = v.slice(0, 2) + "/" + v.slice(2);
-    if (v.length >= 6) v = v.slice(0, 5) + "/" + v.slice(5);
-    return v.slice(0, 10);
-  };
-
-  const maskPhone = (value: string) => {
-    let v = value.replace(/\D/g, "");
-    if (v.length <= 10) {
-      v = v.replace(/(\d{2})(\d{4})(\d{0,4})/, "($1) $2-$3");
-    } else {
-      v = v.replace(/(\d{2})(\d{5})(\d{0,4})/, "($1) $2-$3");
-    }
-    return v;
-  };
-
-  const maskCpf = (value: string) => {
-    let v = value.replace(/\D/g, "");
-    v = v.replace(/(\d{3})(\d)/, "$1.$2");
-    v = v.replace(/(\d{3})(\d)/, "$1.$2");
-    v = v.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
-    return v.slice(0, 14);
   };
 
   return (
@@ -117,11 +94,7 @@ export default function AccountPage() {
                 {...register("name")}
                 type="text"
                 className={`w-full px-4 py-3 border rounded text-sm outline-none transition-colors
-                  ${
-                    errors.name
-                      ? "border-red-400 focus:border-red-400"
-                      : "border-gray-200 focus:border-(--color-primaria)"
-                  }`}
+                  ${errors.name ? "border-red-400 focus:border-red-400" : "border-gray-200 focus:border-(--color-primaria)"}`}
               />
               {errors.name && (
                 <span className="text-xs text-red-500">
@@ -138,11 +111,7 @@ export default function AccountPage() {
                 {...register("email")}
                 type="email"
                 className={`w-full px-4 py-3 border rounded text-sm outline-none transition-colors
-                  ${
-                    errors.email
-                      ? "border-red-400 focus:border-red-400"
-                      : "border-gray-200 focus:border-(--color-primaria)"
-                  }`}
+                  ${errors.email ? "border-red-400 focus:border-red-400" : "border-gray-200 focus:border-(--color-primaria)"}`}
               />
               {errors.email && (
                 <span className="text-xs text-red-500">
@@ -169,11 +138,7 @@ export default function AccountPage() {
                   });
                 }}
                 className={`w-full px-4 py-3 border rounded text-sm outline-none transition-colors
-                  ${
-                    errors.phone
-                      ? "border-red-400 focus:border-red-400"
-                      : "border-gray-200 focus:border-(--color-primaria)"
-                  }`}
+                  ${errors.phone ? "border-red-400 focus:border-red-400" : "border-gray-200 focus:border-(--color-primaria)"}`}
               />
               {errors.phone && (
                 <span className="text-xs text-red-500">
@@ -197,11 +162,7 @@ export default function AccountPage() {
                   });
                 }}
                 className={`w-full px-4 py-3 border rounded text-sm outline-none transition-colors
-                  ${
-                    errors.cpf
-                      ? "border-red-400 focus:border-red-400"
-                      : "border-gray-200 focus:border-(--color-primaria)"
-                  }`}
+                  ${errors.cpf ? "border-red-400 focus:border-red-400" : "border-gray-200 focus:border-(--color-primaria)"}`}
               />
               {errors.cpf && (
                 <span className="text-xs text-red-500">

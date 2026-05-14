@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Suspense } from "react";
-import { produtos, categorias } from "@/app/data/products";
+import { useProducts } from "@/app/hooks";
 import { FunnelSimple } from "@phosphor-icons/react";
 
 const grupos = [
@@ -16,7 +16,9 @@ const grupos = [
 function ProdutosContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const categoriaAtiva = searchParams.get("categoria");
+  const categoriaAtiva = searchParams.get("categoria") ?? undefined;
+
+  const { produtos, categorias, loading, error } = useProducts(categoriaAtiva);
 
   const setCategoriaAtiva = (slug: string | null) => {
     if (slug) {
@@ -25,10 +27,6 @@ function ProdutosContent() {
       router.push("/products");
     }
   };
-
-  const produtosFiltrados = categoriaAtiva
-    ? produtos.filter((p) => p.categoria === categoriaAtiva)
-    : produtos;
 
   return (
     <div className="flex min-h-screen bg-(--color-fundo)">
@@ -95,16 +93,44 @@ function ProdutosContent() {
                 : "Todos os Produtos"}
             </h1>
             <p className="text-xs text-[#888] mt-1">
-              {produtosFiltrados.length} produto
-              {produtosFiltrados.length !== 1 ? "s" : ""} encontrado
-              {produtosFiltrados.length !== 1 ? "s" : ""}
+              {loading
+                ? "Carregando..."
+                : `${produtos.length} produto${produtos.length !== 1 ? "s" : ""} encontrado${produtos.length !== 1 ? "s" : ""}`}
             </p>
           </div>
         </div>
 
-        {produtosFiltrados.length > 0 ? (
+        {/* ERRO */}
+        {error && (
+          <div className="flex items-center justify-center h-64">
+            <p className="text-sm text-red-400">{error}</p>
+          </div>
+        )}
+
+        {/* LOADING */}
+        {loading && (
           <div className="grid grid-cols-3 gap-6">
-            {produtosFiltrados.map((produto) => (
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div
+                key={i}
+                className="bg-white rounded-xl overflow-hidden animate-pulse"
+              >
+                <div className="aspect-square bg-gray-100" />
+                <div className="p-4 flex flex-col gap-2">
+                  <div className="h-3 bg-gray-100 rounded w-1/3" />
+                  <div className="h-5 bg-gray-100 rounded w-2/3" />
+                  <div className="h-3 bg-gray-100 rounded w-full" />
+                  <div className="h-4 bg-gray-100 rounded w-1/4 mt-1" />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* PRODUTOS */}
+        {!loading && !error && produtos.length > 0 && (
+          <div className="grid grid-cols-3 gap-6">
+            {produtos.map((produto) => (
               <Link
                 key={produto.slug}
                 href={`/products/${produto.slug}`}
@@ -139,7 +165,10 @@ function ProdutosContent() {
               </Link>
             ))}
           </div>
-        ) : (
+        )}
+
+        {/* VAZIO */}
+        {!loading && !error && produtos.length === 0 && (
           <div className="flex flex-col items-center justify-center h-64 gap-4">
             <p className="text-sm text-[#888]">
               Nenhum produto encontrado nessa categoria.
