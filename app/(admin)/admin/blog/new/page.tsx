@@ -6,7 +6,8 @@ import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { ArrowLeft, WarningCircle } from "@phosphor-icons/react";
-import { categoriasBlog } from "@/app/data/blog";
+import { usePosts } from "@/app/hooks";
+import { generateSlug } from "@/app/utils";
 
 const blogSchema = z.object({
   titulo: z.string().min(5, "Título deve ter no mínimo 5 caracteres"),
@@ -28,17 +29,9 @@ const blogSchema = z.object({
 
 type BlogSchema = z.infer<typeof blogSchema>;
 
-const generateSlug = (name: string) =>
-  name
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9\s-]/g, "")
-    .trim()
-    .replace(/\s+/g, "-");
-
 export default function NewBlogPage() {
   const [slugPreview, setSlugPreview] = useState("");
+  const { categorias } = usePosts();
 
   const {
     register,
@@ -62,12 +55,12 @@ export default function NewBlogPage() {
   const conteudoValue = watch("conteudo");
 
   const onSubmit = async (data: BlogSchema) => {
+    // TODO: blogService.create(data)
     console.log(data);
   };
 
   return (
     <div className="flex flex-col gap-6">
-      {/* HEADER */}
       <div className="flex items-center gap-4">
         <Link
           href="/admin/blog"
@@ -90,9 +83,7 @@ export default function NewBlogPage() {
         onSubmit={handleSubmit(onSubmit)}
         className="grid grid-cols-3 gap-6"
       >
-        {/* COLUNA PRINCIPAL */}
         <div className="col-span-2 flex flex-col gap-6">
-          {/* INFORMAÇÕES BÁSICAS */}
           <div className="bg-white rounded-xl p-6 flex flex-col gap-5">
             <h2 className="font-titulo text-lg text-(--color-texto)">
               Informações básicas
@@ -112,8 +103,7 @@ export default function NewBlogPage() {
                   setValue("slug", slug);
                   setSlugPreview(slug);
                 }}
-                className={`w-full px-4 py-3 border rounded text-sm outline-none transition-colors
-                  ${errors.titulo ? "border-red-400" : "border-gray-200 focus:border-(--color-primaria)"}`}
+                className={`w-full px-4 py-3 border rounded text-sm outline-none transition-colors ${errors.titulo ? "border-red-400" : "border-gray-200 focus:border-(--color-primaria)"}`}
               />
               {errors.titulo && (
                 <div className="flex items-center gap-1.5 text-red-500">
@@ -131,8 +121,7 @@ export default function NewBlogPage() {
                 {...register("slug")}
                 type="text"
                 placeholder="5-dicas-vida-sexual"
-                className={`w-full px-4 py-3 border rounded text-sm outline-none transition-colors font-mono
-                  ${errors.slug ? "border-red-400" : "border-gray-200 focus:border-(--color-primaria)"}`}
+                className={`w-full px-4 py-3 border rounded text-sm outline-none transition-colors font-mono ${errors.slug ? "border-red-400" : "border-gray-200 focus:border-(--color-primaria)"}`}
               />
               {errors.slug ? (
                 <div className="flex items-center gap-1.5 text-red-500">
@@ -157,8 +146,7 @@ export default function NewBlogPage() {
                 {...register("resumo")}
                 rows={3}
                 placeholder="Breve descrição do post que aparece nos cards..."
-                className={`w-full px-4 py-3 border rounded text-sm outline-none transition-colors resize-none
-                  ${errors.resumo ? "border-red-400" : "border-gray-200 focus:border-(--color-primaria)"}`}
+                className={`w-full px-4 py-3 border rounded text-sm outline-none transition-colors resize-none ${errors.resumo ? "border-red-400" : "border-gray-200 focus:border-(--color-primaria)"}`}
               />
               {errors.resumo && (
                 <div className="flex items-center gap-1.5 text-red-500">
@@ -169,7 +157,6 @@ export default function NewBlogPage() {
             </div>
           </div>
 
-          {/* CONTEÚDO */}
           <div className="bg-white rounded-xl p-6 flex flex-col gap-4">
             <div className="flex items-center justify-between">
               <h2 className="font-titulo text-lg text-(--color-texto)">
@@ -183,8 +170,7 @@ export default function NewBlogPage() {
               {...register("conteudo")}
               rows={16}
               placeholder="Escreva o conteúdo completo do post aqui..."
-              className={`w-full px-4 py-3 border rounded text-sm outline-none transition-colors resize-none
-                ${errors.conteudo ? "border-red-400" : "border-gray-200 focus:border-(--color-primaria)"}`}
+              className={`w-full px-4 py-3 border rounded text-sm outline-none transition-colors resize-none ${errors.conteudo ? "border-red-400" : "border-gray-200 focus:border-(--color-primaria)"}`}
             />
             {errors.conteudo && (
               <div className="flex items-center gap-1.5 text-red-500">
@@ -198,14 +184,11 @@ export default function NewBlogPage() {
           </div>
         </div>
 
-        {/* COLUNA LATERAL */}
         <div className="flex flex-col gap-6">
-          {/* PUBLICAÇÃO */}
           <div className="bg-white rounded-xl p-6 flex flex-col gap-4">
             <h2 className="font-titulo text-lg text-(--color-texto)">
               Publicação
             </h2>
-
             <div className="flex items-center justify-between">
               <div>
                 <span className="text-sm text-(--color-texto)">Publicado</span>
@@ -223,7 +206,6 @@ export default function NewBlogPage() {
                 <div className="w-10 h-5 bg-gray-200 rounded-full peer peer-checked:bg-(--color-primaria) peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all" />
               </label>
             </div>
-
             <div className="flex flex-col gap-3 pt-3 border-t border-gray-100">
               <button
                 type="submit"
@@ -241,23 +223,20 @@ export default function NewBlogPage() {
             </div>
           </div>
 
-          {/* ORGANIZAÇÃO */}
           <div className="bg-white rounded-xl p-6 flex flex-col gap-4">
             <h2 className="font-titulo text-lg text-(--color-texto)">
               Organização
             </h2>
-
             <div className="flex flex-col gap-2">
               <label className="text-xs tracking-[2px] uppercase text-(--color-texto) font-medium">
                 Categoria
               </label>
               <select
                 {...register("categoria")}
-                className={`w-full px-4 py-3 border rounded text-sm outline-none transition-colors
-                  ${errors.categoria ? "border-red-400" : "border-gray-200 focus:border-(--color-primaria)"}`}
+                className={`w-full px-4 py-3 border rounded text-sm outline-none transition-colors ${errors.categoria ? "border-red-400" : "border-gray-200 focus:border-(--color-primaria)"}`}
               >
                 <option value="">Selecionar categoria</option>
-                {categoriasBlog.map((c) => (
+                {categorias.map((c) => (
                   <option key={c.slug} value={c.slug}>
                     {c.label}
                   </option>

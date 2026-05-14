@@ -7,12 +7,12 @@ import {
   PencilSimple,
   Trash,
   MagnifyingGlass,
-  Eye,
   EyeSlash,
 } from "@phosphor-icons/react";
-import { posts, categoriasBlog } from "@/app/data/blog";
+import { usePosts } from "@/app/hooks";
 
 export default function AdminBlogPage() {
+  const { posts, categorias, loading } = usePosts();
   const [search, setSearch] = useState("");
   const [categoriaFiltro, setCategoriaFiltro] = useState("");
   const [deleteId, setDeleteId] = useState<string | null>(null);
@@ -32,7 +32,7 @@ export default function AdminBlogPage() {
         <div>
           <h1 className="font-titulo text-3xl text-(--color-texto)">Blog</h1>
           <p className="font-corpo text-sm text-[#888] mt-1">
-            {posts.length} posts cadastrados
+            {loading ? "Carregando..." : `${posts.length} posts cadastrados`}
           </p>
         </div>
         <Link
@@ -65,7 +65,7 @@ export default function AdminBlogPage() {
           className="border border-gray-200 rounded px-3 py-2 text-xs outline-none focus:border-(--color-primaria) text-[#888]"
         >
           <option value="">Todas as categorias</option>
-          {categoriasBlog.map((c) => (
+          {categorias.map((c) => (
             <option key={c.slug} value={c.slug}>
               {c.label}
             </option>
@@ -75,88 +75,93 @@ export default function AdminBlogPage() {
 
       {/* TABELA */}
       <div className="bg-white rounded-xl overflow-hidden">
-        <table className="w-full">
-          <thead>
-            <tr className="border-b border-gray-100">
-              <th className="text-left px-6 py-4 text-[0.65rem] tracking-[3px] uppercase text-[#888] font-medium">
-                Post
-              </th>
-              <th className="text-left px-6 py-4 text-[0.65rem] tracking-[3px] uppercase text-[#888] font-medium">
-                Categoria
-              </th>
-              <th className="text-left px-6 py-4 text-[0.65rem] tracking-[3px] uppercase text-[#888] font-medium">
-                Data
-              </th>
-              <th className="text-left px-6 py-4 text-[0.65rem] tracking-[3px] uppercase text-[#888] font-medium">
-                Status
-              </th>
-              <th className="text-right px-6 py-4 text-[0.65rem] tracking-[3px] uppercase text-[#888] font-medium">
-                Ações
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-50">
-            {postsFiltrados.map((post) => (
-              <tr
-                key={post.slug}
-                className="hover:bg-gray-50 transition-colors"
-              >
-                <td className="px-6 py-4">
-                  <div className="flex flex-col gap-0.5">
-                    <p className="text-sm font-medium text-(--color-texto)">
-                      {post.titulo}
-                    </p>
-                    <p className="font-corpo text-xs text-[#888]">
-                      {post.slug}
-                    </p>
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                  <span className="font-corpo text-xs text-[#888]">
-                    {
-                      categoriasBlog.find((c) => c.slug === post.categoria)
-                        ?.label
-                    }
-                  </span>
-                </td>
-                <td className="px-6 py-4">
-                  <span className="font-corpo text-xs text-[#888]">
-                    {post.data}
-                  </span>
-                </td>
-                <td className="px-6 py-4">
-                  <span className="font-corpo text-xs px-2 py-1 rounded-full bg-green-50 text-green-600">
-                    Publicado
-                  </span>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="flex items-center justify-end gap-2">
-                    <button
-                      title="Despublicar"
-                      className="p-1.5 text-[#aaa] hover:text-yellow-500 transition-colors"
-                    >
-                      <EyeSlash size={16} />
-                    </button>
-                    <Link
-                      href={`/admin/blog/${post.slug}/edit`}
-                      className="p-1.5 text-[#aaa] hover:text-(--color-primaria) transition-colors"
-                    >
-                      <PencilSimple size={16} />
-                    </Link>
-                    <button
-                      onClick={() => setDeleteId(post.slug)}
-                      className="p-1.5 text-[#aaa] hover:text-red-400 transition-colors"
-                    >
-                      <Trash size={16} />
-                    </button>
-                  </div>
-                </td>
+        {loading ? (
+          <div className="flex items-center justify-center py-16">
+            <div className="w-8 h-8 border-2 border-(--color-primaria) border-t-transparent rounded-full animate-spin" />
+          </div>
+        ) : (
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-gray-100">
+                <th className="text-left px-6 py-4 text-[0.65rem] tracking-[3px] uppercase text-[#888] font-medium">
+                  Post
+                </th>
+                <th className="text-left px-6 py-4 text-[0.65rem] tracking-[3px] uppercase text-[#888] font-medium">
+                  Categoria
+                </th>
+                <th className="text-left px-6 py-4 text-[0.65rem] tracking-[3px] uppercase text-[#888] font-medium">
+                  Data
+                </th>
+                <th className="text-left px-6 py-4 text-[0.65rem] tracking-[3px] uppercase text-[#888] font-medium">
+                  Status
+                </th>
+                <th className="text-right px-6 py-4 text-[0.65rem] tracking-[3px] uppercase text-[#888] font-medium">
+                  Ações
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-gray-50">
+              {postsFiltrados.map((post) => (
+                <tr
+                  key={post.slug}
+                  className="hover:bg-gray-50 transition-colors"
+                >
+                  <td className="px-6 py-4">
+                    <div className="flex flex-col gap-0.5">
+                      <p className="text-sm font-medium text-(--color-texto)">
+                        {post.titulo}
+                      </p>
+                      <p className="font-corpo text-xs text-[#888]">
+                        {post.slug}
+                      </p>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className="font-corpo text-xs text-[#888]">
+                      {categorias.find((c) => c.slug === post.categoria)?.label}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className="font-corpo text-xs text-[#888]">
+                      {post.data}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span
+                      className={`font-corpo text-xs px-2 py-1 rounded-full ${post.publicado === false ? "bg-yellow-50 text-yellow-600" : "bg-green-50 text-green-600"}`}
+                    >
+                      {post.publicado === false ? "Rascunho" : "Publicado"}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center justify-end gap-2">
+                      <button
+                        title="Despublicar"
+                        className="p-1.5 text-[#aaa] hover:text-yellow-500 transition-colors"
+                      >
+                        <EyeSlash size={16} />
+                      </button>
+                      <Link
+                        href={`/admin/blog/${post.slug}/edit`}
+                        className="p-1.5 text-[#aaa] hover:text-(--color-primaria) transition-colors"
+                      >
+                        <PencilSimple size={16} />
+                      </Link>
+                      <button
+                        onClick={() => setDeleteId(post.slug)}
+                        className="p-1.5 text-[#aaa] hover:text-red-400 transition-colors"
+                      >
+                        <Trash size={16} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
 
-        {postsFiltrados.length === 0 && (
+        {!loading && postsFiltrados.length === 0 && (
           <div className="flex flex-col items-center justify-center py-16 gap-2">
             <p className="text-sm text-[#888]">Nenhum post encontrado</p>
           </div>

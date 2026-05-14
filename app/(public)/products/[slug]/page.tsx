@@ -3,7 +3,7 @@
 import { use, useState } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { produtos, categorias } from "@/app/data/products";
+import { useProduct, useProducts } from "@/app/hooks";
 import { useCartStore } from "@/app/store/useCartStore";
 import {
   ShoppingCart,
@@ -19,14 +19,8 @@ type Props = {
 
 export default function ProductPage({ params }: Props) {
   const { slug } = use(params);
-  const produto = produtos.find((p) => p.slug === slug);
-
-  if (!produto) notFound();
-
-  const categoria = categorias.find((c) => c.slug === produto.categoria);
-  const relacionados = produtos
-    .filter((p) => p.categoria === produto.categoria && p.slug !== produto.slug)
-    .slice(0, 3);
+  const { produto, loading, error } = useProduct(slug);
+  const { categorias } = useProducts();
 
   const [nota, setNota] = useState(0);
   const [hoverNota, setHoverNota] = useState(0);
@@ -34,6 +28,21 @@ export default function ProductPage({ params }: Props) {
   const [adicionado, setAdicionado] = useState(false);
 
   const addItem = useCartStore((state) => state.addItem);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-(--color-fundo) flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-8 h-8 border-2 border-(--color-primaria) border-t-transparent rounded-full animate-spin" />
+          <p className="text-sm text-[#888]">Carregando produto...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !produto) notFound();
+
+  const categoria = categorias.find((c) => c.slug === produto.categoria);
 
   const handleAddToCart = () => {
     for (let i = 0; i < quantidade; i++) {
@@ -180,11 +189,7 @@ export default function ProductPage({ params }: Props) {
               <button
                 onClick={handleAddToCart}
                 className={`flex items-center justify-center gap-2 py-4 text-xs tracking-[2px] uppercase transition-all
-                  ${
-                    adicionado
-                      ? "bg-green-600 text-white"
-                      : "bg-(--color-primaria) text-white hover:opacity-90"
-                  }`}
+                  ${adicionado ? "bg-green-600 text-white" : "bg-(--color-primaria) text-white hover:opacity-90"}`}
               >
                 <ShoppingCart size={18} />
                 {adicionado
@@ -223,7 +228,7 @@ export default function ProductPage({ params }: Props) {
           </div>
         </div>
 
-        {/* CARACTERÍSTICAS + RESUMO AVALIAÇÕES */}
+        {/* CARACTERÍSTICAS + AVALIAÇÕES */}
         <div className="max-w-6xl mx-auto mt-20 grid grid-cols-2 gap-16 pt-12 border-t border-gray-100">
           <div>
             <h2 className="font-titulo text-2xl text-(--color-texto) mb-6">
@@ -347,7 +352,6 @@ export default function ProductPage({ params }: Props) {
                 ))}
               </div>
             </div>
-
             <div className="flex flex-col gap-2">
               <label className="text-xs tracking-[2px] uppercase text-(--color-texto) font-medium">
                 Seu nome
@@ -358,7 +362,6 @@ export default function ProductPage({ params }: Props) {
                 className="border border-gray-200 rounded px-4 py-3 text-sm outline-none focus:border-(--color-primaria) transition-colors"
               />
             </div>
-
             <div className="flex flex-col gap-2">
               <label className="text-xs tracking-[2px] uppercase text-(--color-texto) font-medium">
                 Comentário
@@ -369,41 +372,11 @@ export default function ProductPage({ params }: Props) {
                 className="border border-gray-200 rounded px-4 py-3 text-sm outline-none focus:border-(--color-primaria) transition-colors resize-none"
               />
             </div>
-
             <button className="self-start px-8 py-3 bg-(--color-primaria) text-white text-xs tracking-[2px] uppercase hover:opacity-90 transition-opacity">
               Enviar avaliação
             </button>
           </div>
         </div>
-
-        {/* RELACIONADOS */}
-        {relacionados.length > 0 && (
-          <div className="max-w-6xl mx-auto mt-20">
-            <h2 className="font-titulo text-2xl text-(--color-texto) mb-8">
-              Você também pode{" "}
-              <span className="text-(--color-primaria)">gostar</span>
-            </h2>
-            <div className="grid grid-cols-3 gap-6">
-              {relacionados.map((rel) => (
-                <Link
-                  key={rel.slug}
-                  href={`/products/${rel.slug}`}
-                  className="group bg-white rounded-xl overflow-hidden hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-[rgba(163,22,33,0.1)] transition-all duration-200"
-                >
-                  <div className="aspect-square bg-gradient-to-br from-[#fdf0f1] to-[#f0d0d3]" />
-                  <div className="p-4 flex flex-col gap-1">
-                    <h3 className="font-titulo text-base text-(--color-texto) group-hover:text-(--color-primaria) transition-colors">
-                      {rel.nome}
-                    </h3>
-                    <p className="font-corpo text-sm font-semibold text-(--color-primaria)">
-                      R$ {rel.preco.toFixed(2).replace(".", ",")}
-                    </p>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
-        )}
 
         {/* VOLTAR */}
         <div className="max-w-6xl mx-auto mt-12">

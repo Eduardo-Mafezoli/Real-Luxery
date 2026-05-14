@@ -12,7 +12,8 @@ import {
   Trash,
   WarningCircle,
 } from "@phosphor-icons/react";
-import { categorias } from "@/app/data/products";
+import { useProducts } from "@/app/hooks";
+import { generateSlug } from "@/app/utils";
 
 const productSchema = z.object({
   nome: z.string().min(3, "Nome deve ter no mínimo 3 caracteres"),
@@ -36,16 +37,8 @@ const productSchema = z.object({
 
 type ProductSchema = z.infer<typeof productSchema>;
 
-const generateSlug = (name: string) =>
-  name
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9\s-]/g, "")
-    .trim()
-    .replace(/\s+/g, "-");
-
 export default function NewProductPage() {
+  const { categorias } = useProducts();
   const [caracteristicas, setCaracteristicas] = useState([
     { label: "", valor: "" },
   ]);
@@ -74,15 +67,14 @@ export default function NewProductPage() {
   const slugValue = watch("slug");
 
   const onSubmit = async (data: ProductSchema) => {
+    // TODO: productService.create(data)
     console.log({ ...data, caracteristicas });
   };
 
   const addCaracteristica = () =>
     setCaracteristicas([...caracteristicas, { label: "", valor: "" }]);
-
   const removeCaracteristica = (index: number) =>
     setCaracteristicas(caracteristicas.filter((_, i) => i !== index));
-
   const updateCaracteristica = (
     index: number,
     field: "label" | "valor",
@@ -95,7 +87,6 @@ export default function NewProductPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      {/* HEADER */}
       <div className="flex items-center gap-4">
         <Link
           href="/admin/products"
@@ -118,7 +109,6 @@ export default function NewProductPage() {
         onSubmit={handleSubmit(onSubmit)}
         className="grid grid-cols-3 gap-6"
       >
-        {/* COLUNA PRINCIPAL */}
         <div className="col-span-2 flex flex-col gap-6">
           <div className="bg-white rounded-xl p-6 flex flex-col gap-5">
             <h2 className="font-titulo text-lg text-(--color-texto)">
@@ -139,8 +129,7 @@ export default function NewProductPage() {
                   setValue("slug", slug);
                   setSlugPreview(slug);
                 }}
-                className={`w-full px-4 py-3 border rounded text-sm outline-none transition-colors
-                  ${errors.nome ? "border-red-400" : "border-gray-200 focus:border-(--color-primaria)"}`}
+                className={`w-full px-4 py-3 border rounded text-sm outline-none transition-colors ${errors.nome ? "border-red-400" : "border-gray-200 focus:border-(--color-primaria)"}`}
               />
               {errors.nome && (
                 <div className="flex items-center gap-1.5 text-red-500">
@@ -158,8 +147,7 @@ export default function NewProductPage() {
                 {...register("slug")}
                 type="text"
                 placeholder="vibrador-premium-silicone"
-                className={`w-full px-4 py-3 border rounded text-sm outline-none transition-colors font-mono
-                  ${errors.slug ? "border-red-400" : "border-gray-200 focus:border-(--color-primaria)"}`}
+                className={`w-full px-4 py-3 border rounded text-sm outline-none transition-colors font-mono ${errors.slug ? "border-red-400" : "border-gray-200 focus:border-(--color-primaria)"}`}
               />
               {errors.slug ? (
                 <div className="flex items-center gap-1.5 text-red-500">
@@ -181,8 +169,7 @@ export default function NewProductPage() {
                 {...register("descricao")}
                 rows={4}
                 placeholder="Descreva o produto detalhadamente..."
-                className={`w-full px-4 py-3 border rounded text-sm outline-none transition-colors resize-none
-                  ${errors.descricao ? "border-red-400" : "border-gray-200 focus:border-(--color-primaria)"}`}
+                className={`w-full px-4 py-3 border rounded text-sm outline-none transition-colors resize-none ${errors.descricao ? "border-red-400" : "border-gray-200 focus:border-(--color-primaria)"}`}
               />
               {errors.descricao && (
                 <div className="flex items-center gap-1.5 text-red-500">
@@ -193,7 +180,6 @@ export default function NewProductPage() {
             </div>
           </div>
 
-          {/* IMAGENS */}
           <div className="bg-white rounded-xl p-6 flex flex-col gap-4">
             <h2 className="font-titulo text-lg text-(--color-texto)">
               Imagens
@@ -215,7 +201,6 @@ export default function NewProductPage() {
             </div>
           </div>
 
-          {/* CARACTERÍSTICAS */}
           <div className="bg-white rounded-xl p-6 flex flex-col gap-4">
             <div className="flex items-center justify-between">
               <h2 className="font-titulo text-lg text-(--color-texto)">
@@ -264,14 +249,11 @@ export default function NewProductPage() {
           </div>
         </div>
 
-        {/* COLUNA LATERAL */}
         <div className="flex flex-col gap-6">
-          {/* PUBLICAÇÃO */}
           <div className="bg-white rounded-xl p-6 flex flex-col gap-4">
             <h2 className="font-titulo text-lg text-(--color-texto)">
               Publicação
             </h2>
-
             <div className="flex items-center justify-between">
               <div>
                 <span className="text-sm text-(--color-texto)">
@@ -291,7 +273,6 @@ export default function NewProductPage() {
                 <div className="w-10 h-5 bg-gray-200 rounded-full peer peer-checked:bg-(--color-primaria) peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all" />
               </label>
             </div>
-
             <div className="flex items-center justify-between pt-3 border-t border-gray-100">
               <div>
                 <span className="text-sm text-(--color-texto)">Esgotado</span>
@@ -308,7 +289,6 @@ export default function NewProductPage() {
                 <div className="w-10 h-5 bg-gray-200 rounded-full peer peer-checked:bg-yellow-400 peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all" />
               </label>
             </div>
-
             <div className="flex flex-col gap-3 pt-3 border-t border-gray-100">
               <button
                 type="submit"
@@ -326,7 +306,6 @@ export default function NewProductPage() {
             </div>
           </div>
 
-          {/* PREÇO */}
           <div className="bg-white rounded-xl p-6 flex flex-col gap-4">
             <h2 className="font-titulo text-lg text-(--color-texto)">Preço</h2>
             <div className="flex flex-col gap-2">
@@ -337,8 +316,7 @@ export default function NewProductPage() {
                 {...register("preco")}
                 type="text"
                 placeholder="0,00"
-                className={`w-full px-4 py-3 border rounded text-sm outline-none transition-colors
-                  ${errors.preco ? "border-red-400" : "border-gray-200 focus:border-(--color-primaria)"}`}
+                className={`w-full px-4 py-3 border rounded text-sm outline-none transition-colors ${errors.preco ? "border-red-400" : "border-gray-200 focus:border-(--color-primaria)"}`}
               />
               {errors.preco && (
                 <div className="flex items-center gap-1.5 text-red-500">
@@ -349,7 +327,6 @@ export default function NewProductPage() {
             </div>
           </div>
 
-          {/* ORGANIZAÇÃO */}
           <div className="bg-white rounded-xl p-6 flex flex-col gap-4">
             <h2 className="font-titulo text-lg text-(--color-texto)">
               Organização
@@ -360,8 +337,7 @@ export default function NewProductPage() {
               </label>
               <select
                 {...register("categoria")}
-                className={`w-full px-4 py-3 border rounded text-sm outline-none transition-colors
-                  ${errors.categoria ? "border-red-400" : "border-gray-200 focus:border-(--color-primaria)"}`}
+                className={`w-full px-4 py-3 border rounded text-sm outline-none transition-colors ${errors.categoria ? "border-red-400" : "border-gray-200 focus:border-(--color-primaria)"}`}
               >
                 <option value="">Selecionar categoria</option>
                 {categorias.map((c) => (
@@ -377,7 +353,6 @@ export default function NewProductPage() {
                 </div>
               )}
             </div>
-
             <div className="flex flex-col gap-2">
               <label className="text-xs tracking-[2px] uppercase text-(--color-texto) font-medium">
                 Badge (opcional)

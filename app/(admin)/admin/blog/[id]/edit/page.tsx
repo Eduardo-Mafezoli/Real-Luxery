@@ -12,7 +12,7 @@ import {
   Eye,
   EyeSlash,
 } from "@phosphor-icons/react";
-import { categoriasBlog, posts } from "@/app/data/blog";
+import { usePost, usePosts } from "@/app/hooks";
 import { notFound } from "next/navigation";
 
 const blogSchema = z.object({
@@ -41,9 +41,8 @@ type Props = {
 
 export default function EditBlogPage({ params }: Props) {
   const { id } = use(params);
-  const post = posts.find((p) => p.slug === id);
-  if (!post) notFound();
-
+  const { post, loading } = usePost(id);
+  const { categorias } = usePosts();
   const [saved, setSaved] = useState(false);
   const [publicado, setPublicado] = useState(true);
 
@@ -55,12 +54,12 @@ export default function EditBlogPage({ params }: Props) {
   } = useForm<BlogSchema>({
     resolver: zodResolver(blogSchema) as Resolver<BlogSchema>,
     defaultValues: {
-      titulo: post.titulo,
-      slug: post.slug,
-      resumo: post.resumo,
-      conteudo: post.conteudo,
-      categoria: post.categoria,
-      publicado: true,
+      titulo: post?.titulo ?? "",
+      slug: post?.slug ?? "",
+      resumo: post?.resumo ?? "",
+      conteudo: post?.conteudo ?? "",
+      categoria: post?.categoria ?? "",
+      publicado: post?.publicado ?? true,
     },
   });
 
@@ -68,10 +67,21 @@ export default function EditBlogPage({ params }: Props) {
   const conteudoValue = watch("conteudo");
 
   const onSubmit = async (data: BlogSchema) => {
+    // TODO: blogService.update(id, data)
     console.log(data);
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="w-8 h-8 border-2 border-(--color-primaria) border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (!post) notFound();
 
   return (
     <div className="flex flex-col gap-6">
@@ -207,7 +217,6 @@ export default function EditBlogPage({ params }: Props) {
             <h2 className="font-titulo text-lg text-(--color-texto)">
               Publicação
             </h2>
-
             <div className="flex items-center justify-between">
               <div>
                 <span className="text-sm text-(--color-texto)">
@@ -231,7 +240,6 @@ export default function EditBlogPage({ params }: Props) {
               </label>
             </div>
 
-            {/* BOTÃO DESPUBLICAR RÁPIDO */}
             <button
               type="button"
               onClick={() => setPublicado(!publicado)}
@@ -285,7 +293,7 @@ export default function EditBlogPage({ params }: Props) {
                   ${errors.categoria ? "border-red-400" : "border-gray-200 focus:border-(--color-primaria)"}`}
               >
                 <option value="">Selecionar categoria</option>
-                {categoriasBlog.map((c) => (
+                {categorias.map((c) => (
                   <option key={c.slug} value={c.slug}>
                     {c.label}
                   </option>
